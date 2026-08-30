@@ -76,11 +76,10 @@ jobs:
           find . -name "*.java" -exec sed -i '/import com.kyleduo/d' {} +
           find . -name "*.java" -exec sed -i '/import com.jonathanfinerty/d' {} +
 
-      - name: Fix Type Casting in MethodProxies.java
+      - name: Fix All Type Casting Errors
         run: |
           cd VirtualApp
-          FILE="lib/src/main/java/com/lody/virtual/client/hook/proxies/pm/MethodProxies.java"
-          sed -i 's/List<ResolveInfo> hostResult = slice ? ParceledListSlice.getList.call(_hostResult)/List<ResolveInfo> hostResult = slice ? (List<ResolveInfo>)(List<?>)ParceledListSlice.getList.call(_hostResult)/g' "$FILE"
+          find . -name "*.java" -exec sed -i 's/slice ? ParceledListSlice.getList.call(_hostResult)/slice ? (List<ResolveInfo>)(List<?>)ParceledListSlice.getList.call(_hostResult)/g' {} +
 
       - name: Grant execute permission
         run: chmod +x VirtualApp/gradlew
