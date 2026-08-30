@@ -27,7 +27,7 @@ jobs:
           cd VirtualApp
           sed -i 's|gradle-4.1-all|gradle-7.6-all|' gradle/wrapper/gradle-wrapper.properties
 
-      - name: Fix Build Gradle
+      - name: Fix Root Build Gradle
         run: |
           cd VirtualApp
           cat > build.gradle << 'GRADLE_EOF'
@@ -54,6 +54,12 @@ jobs:
               delete rootProject.buildDir
           }
           GRADLE_EOF
+
+      - name: Fix App Build Gradle
+        run: |
+          cd VirtualApp
+          sed -i 's/\bcompile\b/implementation/g' app/build.gradle
+          sed -i 's/android.useDeprecatedNdk=true/android.useDeprecatedNdk=false/' gradle.properties
 
       - name: Grant execute permission
         run: chmod +x VirtualApp/gradlew
