@@ -69,10 +69,12 @@ jobs:
           find . -name "*.java" -exec sed -i '/import com.kyleduo/d' {} +
           find . -name "*.java" -exec sed -i '/import com.jonathanfinerty/d' {} +
 
-      - name: Fix All ParceledListSlice Type Casting
+      - name: Fix All Type Casting
         run: |
           cd VirtualApp
-          find . -name "*.java" -exec sed -i 's/ParceledListSlice.getList.call(\([^)]*\))/(List<android.app.ActivityManager.RecentTaskInfo>)(List<?>)ParceledListSlice.getList.call(\1)/g' {} +
+          # Fix generic - gunakan cast yang benar
+          find . -name "*.java" -exec sed -i 's/(List<android.app.ActivityManager.RecentTaskInfo>)(List<?>)/(List<android.content.pm.ResolveInfo>)(List<?>)/g' {} +
+          find . -name "*.java" -exec sed -i 's/ParceledListSlice.getList.call(\([^)]*\))/(List<android.content.pm.ResolveInfo>)(List<?>)ParceledListSlice.getList.call(\1)/g' {} +
 
       - name: Grant execute permission
         run: chmod +x VirtualApp/gradlew
