@@ -35,14 +35,12 @@ jobs:
                   classpath 'com.android.tools.build:gradle:7.4.2'
               }
           }
-
           allprojects {
               repositories {
                   google()
                   mavenCentral()
               }
           }
-
           task clean(type: Delete) {
               delete rootProject.buildDir
           }
@@ -71,21 +69,10 @@ jobs:
           find . -name "*.java" -exec sed -i '/import com.kyleduo/d' {} +
           find . -name "*.java" -exec sed -i '/import com.jonathanfinerty/d' {} +
 
-      - name: Show Line 93 Before Fix
+      - name: Fix All ParceledListSlice Type Casting
         run: |
           cd VirtualApp
-          sed -n '90,96p' lib/src/main/java/com/lody/virtual/client/hook/proxies/am/ActivityManagerStub.java
-
-      - name: Fix Type Casting
-        run: |
-          cd VirtualApp
-          # Fix all ParceledListSlice type issues
-          find . -name "*.java" -exec sed -i 's/\(List<[^>]*>\) \([a-zA-Z_]*\) = slice ? ParceledListSlice.getList.call(\([^)]*\))/\1 \2 = slice ? (\1)(List<?>)ParceledListSlice.getList.call(\3)/g' {} +
-
-      - name: Show Line 93 After Fix
-        run: |
-          cd VirtualApp
-          sed -n '90,96p' lib/src/main/java/com/lody/virtual/client/hook/proxies/am/ActivityManagerStub.java
+          find . -name "*.java" -exec sed -i 's/ParceledListSlice.getList.call(\([^)]*\))/(List<ActivityManager.RecentTaskInfo>)(List<?>)ParceledListSlice.getList.call(\1)/g' {} +
 
       - name: Grant execute permission
         run: chmod +x VirtualApp/gradlew
