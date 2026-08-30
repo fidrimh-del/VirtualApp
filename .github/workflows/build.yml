@@ -72,7 +72,7 @@ jobs:
       - name: Fix All ParceledListSlice Type Casting
         run: |
           cd VirtualApp
-          find . -name "*.java" -exec sed -i 's/ParceledListSlice.getList.call(\([^)]*\))/(List<ActivityManager.RecentTaskInfo>)(List<?>)ParceledListSlice.getList.call(\1)/g' {} +
+          find . -name "*.java" -exec sed -i 's/ParceledListSlice.getList.call(\([^)]*\))/(List<android.app.ActivityManager.RecentTaskInfo>)(List<?>)ParceledListSlice.getList.call(\1)/g' {} +
 
       - name: Grant execute permission
         run: chmod +x VirtualApp/gradlew
