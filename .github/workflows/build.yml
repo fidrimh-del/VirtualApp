@@ -55,10 +55,10 @@ jobs:
           }
           GRADLE_EOF
 
-      - name: Fix App Build Gradle
+      - name: Fix All compile() to implementation()
         run: |
           cd VirtualApp
-          sed -i 's/\bcompile\b/implementation/g' app/build.gradle
+          find . -name "build.gradle" -exec sed -i 's/\bcompile\b/implementation/g' {} +
           sed -i 's/android.useDeprecatedNdk=true/android.useDeprecatedNdk=false/' gradle.properties
 
       - name: Grant execute permission
