@@ -34,7 +34,6 @@ jobs:
           buildscript {
               repositories {
                   google()
-                  jcenter()
                   mavenCentral()
               }
               dependencies {
@@ -45,7 +44,6 @@ jobs:
           allprojects {
               repositories {
                   google()
-                  jcenter()
                   mavenCentral()
               }
           }
@@ -61,13 +59,30 @@ jobs:
           find . -name "build.gradle" -exec sed -i 's/\bcompile\b/implementation/g' {} +
           sed -i 's/android.useDeprecatedNdk=true/android.useDeprecatedNdk=false/' gradle.properties
 
+      - name: Remove Dead Dependencies
+        run: |
+          cd VirtualApp
+          sed -i '/once:once/d' app/build.gradle
+          sed -i '/flurry.android/d' app/build.gradle
+          sed -i '/kyleduo.switchbutton/d' app/build.gradle
+          sed -i '/switchbutton/d' app/build.gradle
+          sed -i '/once/d' app/build.gradle
+          sed -i '/flurry/d' app/build.gradle
+
+      - name: Remove Java References
+        run: |
+          cd VirtualApp
+          find . -name "*.java" -exec sed -i '/import com.flurry/d' {} +
+          find . -name "*.java" -exec sed -i '/import com.kyleduo/d' {} +
+          find . -name "*.java" -exec sed -i '/import com.jonathanfinerty/d' {} +
+
       - name: Grant execute permission
         run: chmod +x VirtualApp/gradlew
 
       - name: Build APK
         run: |
           cd VirtualApp
-          ./gradlew assembleDebug
+          ./gradlew assembleDebug --stacktrace
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
