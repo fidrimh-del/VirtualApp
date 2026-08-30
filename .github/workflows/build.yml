@@ -25,12 +25,35 @@ jobs:
       - name: Update Gradle Wrapper
         run: |
           cd VirtualApp
-          sed -i 's/gradle-4.1-all/gradle-7.6-all/' gradle/wrapper/gradle-wrapper.properties
+          sed -i 's|gradle-4.1-all|gradle-7.6-all|' gradle/wrapper/gradle-wrapper.properties
 
-      - name: Update Gradle Plugin
+      - name: Fix Build Gradle
         run: |
           cd VirtualApp
-          sed -i "s/com.android.tools.build:gradle:.*/com.android.tools.build:gradle:7.4.2/" build.gradle
+          cat > build.gradle << 'GRADLE_EOF'
+          buildscript {
+              repositories {
+                  google()
+                  jcenter()
+                  mavenCentral()
+              }
+              dependencies {
+                  classpath 'com.android.tools.build:gradle:7.4.2'
+              }
+          }
+
+          allprojects {
+              repositories {
+                  google()
+                  jcenter()
+                  mavenCentral()
+              }
+          }
+
+          task clean(type: Delete) {
+              delete rootProject.buildDir
+          }
+          GRADLE_EOF
 
       - name: Grant execute permission
         run: chmod +x VirtualApp/gradlew
