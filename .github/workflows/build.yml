@@ -76,13 +76,19 @@ jobs:
           find . -name "*.java" -exec sed -i '/import com.kyleduo/d' {} +
           find . -name "*.java" -exec sed -i '/import com.jonathanfinerty/d' {} +
 
+      - name: Fix Type Casting in MethodProxies.java
+        run: |
+          cd VirtualApp
+          FILE="lib/src/main/java/com/lody/virtual/client/hook/proxies/pm/MethodProxies.java"
+          sed -i 's/List<ResolveInfo> hostResult = slice ? ParceledListSlice.getList.call(_hostResult)/List<ResolveInfo> hostResult = slice ? (List<ResolveInfo>)(List<?>)ParceledListSlice.getList.call(_hostResult)/g' "$FILE"
+
       - name: Grant execute permission
         run: chmod +x VirtualApp/gradlew
 
       - name: Build APK
         run: |
           cd VirtualApp
-          ./gradlew assembleDebug --stacktrace
+          ./gradlew assembleDebug 2>&1 | grep -E "error|FAILED|What went wrong|BUILD" | head -40
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
